@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "student": {
+      "title": "Student",
+      "description": "A UWGB student profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "email"]
+    },
+    "studyRequest": {
+      "title": "Study Request",
+      "description": "A request for a study group",
+      "type": "object",
+      "properties": {
+        "courseName": { "type": "string" },
+        "building": { "type": "string" },
+        "time": { "type": "string" },
+        "creatorUid": { "type": "string" },
+        "creatorName": { "type": "string" },
+        "participants": { 
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["courseName", "building", "time", "creatorUid", "creatorName"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "student",
+      "description": "Collection of UWGB student profiles"
+    },
+    "/studyRequests/{requestId}": {
+      "schema": "studyRequest",
+      "description": "Real-time study requests"
+    }
+  }
+}

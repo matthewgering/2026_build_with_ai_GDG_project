@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isStudent() {
+      return isAuthenticated();
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Student Profiles
+    match /students/{studentId} {
+      allow read: if isStudent();
+      allow write: if isOwner(studentId);
+    }
+
+    // Study Requests
+    match /studyRequests/{requestId} {
+      allow read: if isStudent();
+      allow create: if isStudent() && request.resource.data.creatorUid == request.auth.uid;
+      allow update: if isStudent() && (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants'])
+      );
+      allow delete: if isStudent() && resource.data.creatorUid == request.auth.uid;
+    }
+  }
+}
